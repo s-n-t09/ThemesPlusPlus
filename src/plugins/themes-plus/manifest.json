@@ -1,0 +1,14 @@
+{
+  "name": "Themes++",
+  "description": "Repairs and improves theme enhancements, custom icon packs, colors, and overlays.",
+  "authors": [
+    {
+      "name": "S.N.T",
+      "id": "1444349574859980881"
+    }
+  ],
+  "main": "src/index.tsx",
+  "vendetta": {
+    "icon": "PaintPaletteIcon"
+  }
+}

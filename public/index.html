@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Themes++ — a maintained repair edition of Themes+ for Revenge, Kettu, and compatible Vendetta-based Discord clients.">
+  <title>Themes++ — Install</title>
+  <style>
+    :root { color-scheme: dark; --bg: #0b0d18; --panel: #151a2b; --panel-2: #1d2540; --text: #f4f6ff; --muted: #a9b2d0; --accent: #8b9cff; --accent-2: #c4caff; --line: rgba(255,255,255,.1); }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--text); background: radial-gradient(circle at 10% 0%, #27346c 0, transparent 34rem), radial-gradient(circle at 90% 20%, #332354 0, transparent 32rem), var(--bg); }
+    main { width: min(960px, calc(100% - 32px)); margin: 0 auto; padding: 72px 0 64px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; color: var(--accent-2); font-size: .78rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #8be9a8; box-shadow: 0 0 18px #8be9a8; }
+    h1 { max-width: 700px; margin: 18px 0 16px; font-size: clamp(3rem, 9vw, 6.8rem); line-height: .9; letter-spacing: -.08em; }
+    .lead { max-width: 680px; margin: 0; color: var(--muted); font-size: clamp(1.05rem, 2vw, 1.35rem); line-height: 1.65; }
+    .card { margin-top: 42px; padding: clamp(22px, 4vw, 38px); border: 1px solid var(--line); border-radius: 24px; background: linear-gradient(145deg, rgba(29,37,64,.94), rgba(16,20,37,.94)); box-shadow: 0 24px 80px rgba(0,0,0,.24); }
+    .card h2 { margin: 0 0 10px; font-size: 1.45rem; }
+    .card p { color: var(--muted); line-height: 1.6; }
+    .url-row { display: flex; gap: 10px; margin-top: 20px; }
+    code.url { flex: 1; overflow: auto; padding: 15px 16px; border: 1px solid var(--line); border-radius: 12px; background: rgba(0,0,0,.24); color: #e2e6ff; white-space: nowrap; font-size: .9rem; }
+    button, .install { display: inline-flex; justify-content: center; align-items: center; border: 0; border-radius: 12px; padding: 0 18px; min-height: 48px; color: #101426; background: var(--accent); font: inherit; font-weight: 800; text-decoration: none; cursor: pointer; transition: transform .18s ease, background .18s ease; }
+    button:hover, .install:hover { transform: translateY(-2px); background: #a8b3ff; }
+    .install { margin-top: 14px; width: 100%; }
+    ol { display: grid; gap: 14px; margin: 26px 0 0; padding-left: 24px; color: var(--muted); line-height: 1.6; }
+    li::marker { color: var(--accent); font-weight: 800; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 14px; }
+    .feature { padding: 20px; border: 1px solid var(--line); border-radius: 18px; background: rgba(21,26,43,.72); }
+    .feature strong { display: block; margin-bottom: 8px; }
+    .feature span { color: var(--muted); font-size: .93rem; line-height: 1.5; }
+    footer { display: flex; justify-content: space-between; gap: 18px; margin-top: 34px; color: var(--muted); font-size: .9rem; }
+    footer a { color: var(--accent-2); }
+    @media (max-width: 680px) { main { padding-top: 44px; } .url-row { flex-direction: column; } .grid { grid-template-columns: 1fr; } footer { flex-direction: column; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow"><span class="dot"></span> Maintained plugin</div>
+    <h1>Themes++</h1>
+    <p class="lead">A repair-focused continuation of Themes+ for Revenge, Kettu, and compatible Vendetta-based Discord clients. Custom icon packs should load reliably again, with safer caching and theme fallbacks.</p>
+
+    <section class="card">
+      <h2>Install Themes++</h2>
+      <p>Copy the URL below and add it from your client’s Plugins settings.</p>
+      <div class="url-row">
+        <code class="url" id="plugin-url">https://s-n-t09.github.io/ThemesPlusPlus/install.js</code>
+        <button type="button" id="copy">Copy URL</button>
+      </div>
+      <a class="install" href="install.js">Open installation file</a>
+      <ol>
+        <li>Copy the installation URL above.</li>
+        <li>Open Discord, then go to <strong>Settings → Plugins</strong>.</li>
+        <li>Press the <strong>+</strong> button to start adding a plugin.</li>
+        <li>Paste the URL and press <strong>Install</strong>.</li>
+        <li>If a confirmation prompt appears, press <strong>Confirm</strong>.</li>
+      </ol>
+    </section>
+
+    <section class="grid" aria-label="Highlights">
+      <div class="feature"><strong>Custom icon packs</strong><span>Function-component-safe image interception and normalized paths for modern and legacy pack layouts.</span></div>
+      <div class="feature"><strong>Resilient loading</strong><span>Independent index, config, and file-tree fetching with local cache fallback.</span></div>
+      <div class="feature"><strong>Theme-friendly</strong><span>Clean fallback behavior for themes that do not define an icon pack.</span></div>
+    </section>
+
+    <footer>
+      <span>Author: <strong>S.N.T</strong></span>
+      <span><a href="https://github.com/s-n-t09/ThemesPlusPlus">View the source on GitHub</a></span>
+    </footer>
+  </main>
+  <script>
+    const button = document.getElementById('copy');
+    const url = document.getElementById('plugin-url').textContent;
+    button.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(url); button.textContent = 'Copied'; setTimeout(() => button.textContent = 'Copy URL', 1600); }
+      catch { button.textContent = 'Select the URL'; }
+    });
+  </script>
+</body>
+</html>

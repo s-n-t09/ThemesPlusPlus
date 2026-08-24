@@ -1,0 +1,198 @@
+{
+  "$schema": "./../.github/iconpacks_list_schema.json",
+  "list": [
+    {
+      "id": "rosiecord-plumpy",
+      "name": "Rosiecord Plumpy",
+      "description": "Probably the most liked Rosiecord iconpack, constantly updated with new icons by another Rosie :3",
+      "credits": {
+        "authors": [
+          {
+            "name": "Rosie",
+            "id": "581573474296791211"
+          },
+          {
+            "name": "samara",
+            "id": "1236648613145346203"
+          },
+          {
+            "name": "Rairof",
+            "id": "923212189123346483"
+          }
+        ],
+        "sources": ["https://icons8.com/icons/plumpy"]
+      },
+      "suffix": "",
+      "config": "https://raw.githubusercontent.com/Rairof/discord-iconpacks/main/Packs/Plumpy/rosiecord-plumpy.json",
+      "load": "https://raw.githubusercontent.com/Rairof/discord-iconpacks/main/Packs/Plumpy/"
+    },
+    {
+      "id": "rosiecord-iconsax",
+      "name": "Rosiecord Iconsax",
+      "description": "Uses some icons from Rosiecord Plumpy, given by Flower :3, includes quite modern icons",
+      "credits": {
+        "authors": [
+          {
+            "name": "Rosie",
+            "id": "581573474296791211"
+          },
+          {
+            "name": "Flower :3"
+          }
+        ],
+        "sources": ["https://iconsax.io/"]
+      },
+      "suffix": "@2x",
+      "load": "https://raw.githubusercontent.com/mudrhiod/discord-iconpacks/master/plus/iconsax/"
+    },
+    {
+      "id": "md3legacy",
+      "name": "MD3 (Legacy)",
+      "description": "Material Icons 3 (Legacy) iconpack for Pyoncord",
+      "credits": {
+        "authors": [
+          {
+            "name": "panniku",
+            "id": "703634705152606318"
+          }
+        ],
+        "sources": ["https://fonts.google.com/icons/"]
+      },
+      "suffix": "",
+      "config": "https://codeberg.org/panbread/iconpackrepo/raw/branch/main/packs/MaterialDesign3Legacy/config.json",
+      "load": "https://codeberg.org/panbread/iconpackrepo/raw/branch/main/packs/MaterialDesign3Legacy/"
+    },
+    {
+      "id": "md3",
+      "name": "MD3 (Rounded) ",
+      "description": "Material Icons 3 (New, Rounded) iconpack for Pyoncord",
+      "credits": {
+        "authors": [
+          {
+            "name": "panniku",
+            "id": "703634705152606318"
+          }
+        ],
+        "sources": ["https://fonts.google.com/icons/"]
+      },
+      "suffix": "",
+      "config": "https://codeberg.org/panbread/iconpackrepo/raw/branch/main/packs/MaterialDesign3/config.json",
+      "load": "https://codeberg.org/panbread/iconpackrepo/raw/branch/main/packs/MaterialDesign3/"
+    },
+    {
+      "id": "deco",
+      "name": "Deco",
+      "description": "An iconpack based on the Icons8 Deco collection",
+      "credits": {
+        "authors": [
+          {
+            "name": "doraa",
+            "id": "455513497288310785"
+          }
+        ],
+        "sources": ["https://icons8.com/icons/deco"]
+      },
+      "suffix": "",
+      "config": "https://raw.githubusercontent.com/dora727/doraa-pyoncordstuff/master/Packs/Deco/config.json",
+      "load": "https://raw.githubusercontent.com/dora727/doraa-pyoncordstuff/master/Packs/Deco/"
+    },
+    {
+      "id": "solar",
+      "name": "Solar",
+      "description": "A giant iconpack, as big as the solar system!",
+      "credits": {
+        "authors": [
+          {
+            "name": "mudrhiod",
+            "id": "807170846497570848"
+          }
+        ],
+        "sources": ["https://www.figma.com/community/file/1166831539721848736/"]
+      },
+      "suffix": "",
+      "config": "https://raw.githubusercontent.com/mudrhiod/discord-iconpacks/master/plus/solar/config.json",
+      "load": "https://raw.githubusercontent.com/mudrhiod/discord-iconpacks/master/plus/solar/"
+    },
+    {
+      "id": "solarduotone",
+      "name": "Solar (Duotone)",
+      "description": "A giant iconpack, as big as the solar system, now with more colors.",
+      "credits": {
+        "authors": [
+          {
+            "name": "mudrhiod",
+            "id": "807170846497570848"
+          }
+        ],
+        "sources": ["https://www.figma.com/community/file/1166831539721848736/"]
+      },
+      "suffix": "",
+      "config": "https://raw.githubusercontent.com/mudrhiod/discord-iconpacks/master/plus/solar-duotone/config.json",
+      "load": "https://raw.githubusercontent.com/mudrhiod/discord-iconpacks/master/plus/solar-duotone/"
+    },
+    {
+      "id": "solarbroken",
+      "name": "Solar (Dashed)",
+      "description": "A giant iconpack, as big as the solar system, now with dashed lines.",
+      "credits": {
+        "authors": [
+          {
+            "name": "mudrhiod",
+            "id": "807170846497570848"
+          }
+        ],
+        "sources": ["https://www.figma.com/community/file/1166831539721848736/"]
+      },
+      "suffix": "",
+      "config": "https://raw.githubusercontent.com/mudrhiod/discord-iconpacks/master/plus/solar-broken/config.json",
+      "load": "https://raw.githubusercontent.com/mudrhiod/discord-iconpacks/master/plus/solar-broken/"
+    },
+    {
+      "id": "materialtwotone",
+      "name": "Material Two Tone",
+      "description": "Material Design icons! but Two Tone.",
+      "credits": {
+        "authors": [
+          {
+            "name": "doraa",
+            "id": "455513497288310785"
+          }
+        ],
+        "sources": [
+          "https://icon-sets.iconify.design/ic/",
+          "https://icons8.com/icons/material-two-tone"
+        ]
+      },
+      "suffix": "",
+      "config": "https://raw.githubusercontent.com/dora727/doraa-pyoncordstuff/master/Packs/MaterialTwoTone/config.json",
+      "load": "https://raw.githubusercontent.com/dora727/doraa-pyoncordstuff/master/Packs/MaterialTwoTone/"
+    },
+    {
+      "id": "iconsaxbulk",
+      "name": "Iconsax Bulk",
+      "description": "Twotoned Iconsax!",
+      "credits": {
+        "authors": [
+          {
+            "name": "doraa",
+            "id": "455513497288310785"
+          },
+          {
+            "name": "Moodle",
+            "id": "807170846497570848"
+          }
+        ],
+        "sources": ["https://iconsax-react.pages.dev/"]
+      },
+      "suffix": "",
+      "config": "https://raw.githubusercontent.com/dora727/doraa-pyoncordstuff/master/Packs/IconsaxBulk/config.json",
+      "load": "https://raw.githubusercontent.com/dora727/doraa-pyoncordstuff/master/Packs/IconsaxBulk/"
+    }
+  ],
+  "_notes": [
+    "please follow the schema in .github/iconpacks_list_schema.json",
+    "sublime — https://packagecontrol.io/packages/Schema%20Validator",
+    "vim — https://github.com/Quramy/vison",
+    "vscode — automatic"
+  ]
+}
