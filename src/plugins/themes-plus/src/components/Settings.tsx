@@ -4,12 +4,18 @@ import { getAssetIDByName } from "@vendetta/ui/assets";
 
 import Text from "$/components/Text";
 import { Reanimated } from "$/deps";
-import { Lang } from "$/lang/index";
 import { Button, FloatingActionButton } from "$/lib/redesign/index";
 import { openModal } from "$/types";
 
-import { lang, PatchType } from "..";
+import { basicFormat, lang, PatchType } from "..";
 import { state, useState } from "../stuff/active";
+
+function animation(name: string, duration: number, easing?: any) {
+	const preset = Reanimated?.[name];
+	if (!preset || typeof preset.duration !== "function") return undefined;
+	const result = preset.duration(duration);
+	return easing && typeof result?.easing === "function" ? result.easing(easing) : result;
+}
 import load from "../stuff/loader";
 import ConfigModal from "./modals/ConfigModal";
 
@@ -97,13 +103,17 @@ const ListItem = ({
 let startTrollingTimeout: any;
 let startTrollingCounter = 0;
 
-const transition = Reanimated.LinearTransition.duration(100).easing(
-	Reanimated.Easing.inOut(Reanimated.Easing.ease),
+const transition = animation(
+	"LinearTransition",
+	100,
+	Reanimated?.Easing?.inOut?.(Reanimated?.Easing?.ease),
 );
-const inUp = Reanimated.FadeInUp.duration(200).easing(
-	Reanimated.Easing.out(Reanimated.Easing.ease),
+const inUp = animation(
+	"FadeInUp",
+	200,
+	Reanimated?.Easing?.out?.(Reanimated?.Easing?.ease),
 );
-const out = Reanimated.FadeOut.duration(80).easing(Reanimated.Easing.ease);
+const out = animation("FadeOut", 80, Reanimated?.Easing?.ease);
 
 export default function() {
 	useState();
@@ -267,7 +277,7 @@ export default function() {
 											</>
 										)
 										: (
-											Lang.basicFormat(
+											basicFormat(
 												lang.format("settings.header", {
 													active: state.active,
 												}),

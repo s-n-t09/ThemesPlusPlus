@@ -2,14 +2,13 @@ import { ActionSheet } from "$/components/ActionSheet";
 import { BetterTableRowGroup } from "$/components/BetterTableRow";
 import ChooseSheet from "$/components/sheets/ChooseSheet";
 import Text from "$/components/Text";
-import { Lang } from "$/lang/index";
 import { RowButton, TextInput } from "$/lib/redesign/index";
 import { constants, React, ReactNative as RN, stylesheet } from "@vendetta/metro/common";
 import { useProxy } from "@vendetta/storage";
 import { semanticColors } from "@vendetta/ui";
 import { getAssetIDByName } from "@vendetta/ui/assets";
 import { Forms } from "@vendetta/ui/components";
-import { ConfigIconpackMode, lang, vstorage } from "../../..";
+import { basicFormat, ConfigIconpackMode, lang, vstorage } from "../../..";
 import { state } from "../../../stuff/active";
 import { customUrl } from "../../../stuff/util";
 import IconpackRow, { previewIcon } from "../../IconpackRow";
@@ -124,7 +123,7 @@ function CustomIconpack() {
 							"modal.config.iconpack.custom.suffix",
 							{},
 						)}
-						description={Lang.basicFormat(
+						description={basicFormat(
 							lang.format(
 								"modal.config.iconpack.custom.suffix.desc",
 								{},
@@ -140,7 +139,7 @@ function CustomIconpack() {
 						"modal.config.iconpack.custom.config.bigger_status",
 						{},
 					)}
-					subLabel={Lang.basicFormat(
+					subLabel={basicFormat(
 						lang.format(
 							"modal.config.iconpack.custom.config.bigger_status.desc",
 							{},

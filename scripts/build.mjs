@@ -36,7 +36,6 @@ const aliases = {
   },
 };
 
-const migration = join(root, "scripts", "build", "migration-shim.ts");
 await build({
   entryPoints: [join(pluginRoot, manifest.main)],
   bundle: true,
@@ -45,7 +44,6 @@ await build({
   outfile: join(outputRoot, "index.js"),
   banner: { js: "(()=>{" },
   footer: { js: "return $;})();" },
-  inject: [migration],
   jsxFactory: "React.createElement",
   define: {
     IS_DEV: "false",
