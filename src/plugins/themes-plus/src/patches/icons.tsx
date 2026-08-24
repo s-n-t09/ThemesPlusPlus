@@ -1,5 +1,5 @@
-import { findByName } from "@vendetta/metro";
-import { ReactNative as RN } from "@vendetta/metro/common";
+import { findByName, findByProps } from "@vendetta/metro";
+import { React, ReactNative as RN } from "@vendetta/metro/common";
 import { after, before } from "@vendetta/patcher";
 import { getAssetByID, getAssetIDByName } from "@vendetta/ui/assets";
 
@@ -14,7 +14,9 @@ import { fixPath, joinUrl } from "../stuff/util";
 import type { BunnyAsset, IconpackConfig } from "../types";
 
 const Status = findByName("Status", false);
+const jsxRuntime = findByProps("jsx", "jsxs");
 const overlaySymbol = Symbol("themes-plus-plus-icon-overlay");
+const transformedSymbol = Symbol("themes-plus-plus-icon-transformed");
 
 type ImageProps = {
 	source?: any;
@@ -155,6 +157,95 @@ function getThemedAsset(source: any): BunnyAsset | null {
 	return null;
 }
 
+function withOverlay(ret: any, overlay: any) {
+	return overlay?.children
+		? (
+			<RN.View>
+				{ret}
+				{overlay.children}
+			</RN.View>
+		)
+		: ret;
+}
+
+function isImageLikeComponent(type: any, props: any) {
+	if (!type) return false;
+	if (type === RN.Image || type?.default === RN.Image || type?.type === RN.Image || type?.render === RN.Image) {
+		return true;
+	}
+	const name = String(type.displayName || type.name || type.render?.displayName || "");
+	return /image|icon/i.test(name) && Boolean(props && Object.prototype.hasOwnProperty.call(props, "source"));
+}
+
+function transformElementArgs(
+	args: any[],
+	plus: PlusStructure,
+	tree: string[],
+	iconpack: NonNullable<typeof state.iconpack.iconpack>,
+	customOverlays: boolean,
+) {
+	const props = args?.[1];
+	return isImageLikeComponent(args?.[0], props)
+		? [args[0], ...transformImageArgs([props], plus, tree, iconpack, customOverlays), ...args.slice(2)]
+		: args;
+}
+
+function transformImageArgs(
+	args: any[],
+	plus: PlusStructure,
+	tree: string[],
+	iconpack: NonNullable<typeof state.iconpack.iconpack>,
+	customOverlays: boolean,
+) {
+	const cloned = [...args] as [ImageProps, ...any[]];
+	const originalProps = cloned[0];
+	if (!originalProps || originalProps.ignore || originalProps[transformedSymbol]) return cloned;
+
+	const props = { ...originalProps };
+	cloned[0] = props;
+	const source = props.source;
+	const asset = getThemedAsset(source);
+	if (!asset?.name) return cloned;
+
+	const iconPath = iconpack ? findIconPath(asset, tree) : undefined;
+	const useIconpack = Boolean(iconpack?.load && iconPath);
+
+	if (customOverlays && !useIconpack && typeof source === "number") {
+		const overlay = getIconOverlay(plus, source, props.style);
+		if (overlay) {
+			Object.defineProperty(props, overlaySymbol, {
+				value: overlay,
+				enumerable: false,
+				configurable: true,
+			});
+			if (overlay.replace) props.source = getAssetIDByName(overlay.replace);
+			if (overlay.style) props.style = [props.style, overlay.style];
+		}
+	}
+
+	if (plus.icons) {
+		const tint = getIconTint(plus, source, asset.name);
+		if (tint) props.style = [props.style, { tintColor: tint }];
+	}
+
+	if (useIconpack) {
+		props.source = {
+			uri: joinUrl(iconpack!.load, iconPath!),
+			headers: { "cache-control": "public, max-age=3600" },
+			width: asset.width,
+			height: asset.height,
+			original: source,
+		};
+	}
+
+	Object.defineProperty(props, transformedSymbol, {
+		value: true,
+		enumerable: false,
+		configurable: true,
+	});
+	return cloned;
+}
+
 export default function patchIcons(
 	plus: PlusStructure,
 	tree: string[],
@@ -180,65 +271,26 @@ export default function patchIcons(
 	if (customOverlays) state.patches.push(PatchType.CustomIconOverlays);
 	if (iconpack) state.patches.push(PatchType.Iconpack);
 
-	// Newer Discord builds expose Image as a function component. The before hook
-	// transforms props, while the after hook restores the overlay child tree.
+	// Newer Discord builds expose Image as a function component. Transforming
+	// the React element arguments catches components that captured Image before
+	// the legacy RN.Image property hook was installed.
 	patches.push(
-		after("Image", RN, (args, ret) => {
-			const overlay = args?.[0]?.[overlaySymbol];
-			return overlay?.children
-				? (
-					<RN.View>
-						{ret}
-						{overlay.children}
-					</RN.View>
-				)
-				: ret;
-		}),
-		before("Image", RN, args => {
-			const cloned = [...args] as [ImageProps, ...any[]];
-			const originalProps = cloned[0];
-			if (!originalProps || originalProps.ignore) return cloned;
-
-			const props = { ...originalProps };
-			cloned[0] = props;
-			const source = props.source;
-			const asset = getThemedAsset(source);
-			if (!asset?.name) return cloned;
-
-			const iconPath = iconpack ? findIconPath(asset, tree) : undefined;
-			const useIconpack = Boolean(iconpack?.load && iconPath);
-
-			if (customOverlays && !useIconpack && typeof source === "number") {
-				const overlay = getIconOverlay(plus, source, props.style);
-				if (overlay) {
-					Object.defineProperty(props, overlaySymbol, {
-						value: overlay,
-						enumerable: false,
-						configurable: true,
-					});
-					if (overlay.replace) props.source = getAssetIDByName(overlay.replace);
-					if (overlay.style) props.style = [props.style, overlay.style];
-				}
-			}
-
-			if (plus.icons) {
-				const tint = getIconTint(plus, source, asset.name);
-				if (tint) props.style = [props.style, { tintColor: tint }];
-			}
-
-			if (useIconpack) {
-				props.source = {
-					uri: joinUrl(iconpack!.load, iconPath!),
-					headers: {
-						"cache-control": "public, max-age=3600",
-					},
-					width: asset.width,
-					height: asset.height,
-					original: source,
-				};
-			}
-
-			return cloned;
-		}),
+		after("Image", RN, (args, ret) => withOverlay(ret, args?.[0]?.[overlaySymbol])),
+		before("Image", RN, args => transformImageArgs(args, plus, tree, iconpack, customOverlays)),
+		after("createElement", React, (args, ret) => withOverlay(ret, args?.[1]?.[overlaySymbol])),
+		before("createElement", React, args => transformElementArgs(args, plus, tree, iconpack, customOverlays)),
 	);
+	if (typeof jsxRuntime?.jsx === "function") {
+		patches.push(
+			after("jsx", jsxRuntime, (args, ret) => withOverlay(ret, args?.[1]?.[overlaySymbol])),
+			before("jsx", jsxRuntime, args => transformElementArgs(args, plus, tree, iconpack, customOverlays)),
+		);
+	}
+	if (typeof jsxRuntime?.jsxs === "function") {
+		patches.push(
+			after("jsxs", jsxRuntime, (args, ret) => withOverlay(ret, args?.[1]?.[overlaySymbol])),
+			before("jsxs", jsxRuntime, args => transformElementArgs(args, plus, tree, iconpack, customOverlays)),
+		);
+	}
+
 }
