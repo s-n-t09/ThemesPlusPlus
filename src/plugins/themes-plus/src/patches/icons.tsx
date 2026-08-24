@@ -39,15 +39,25 @@ function hasCustomOverlays(plus: PlusStructure) {
 function assetPathCandidates(asset: BunnyAsset) {
 	const location = String(asset.httpServerLocation ?? "")
 		.replaceAll("\\", "/")
-		.replace(/^\/+/, "");
-	const file = `${asset.name}.${asset.type}`;
-	const primary = fixPath(`${location}/${file}`);
-	const candidates = [primary];
+		.replace(/^\/+/, "")
+		.replace(/\/$/, "");
+	const file = `${asset.name}.${asset.type || "png"}`;
+	const candidates = location ? [fixPath(`${location}/${file}`)] : [];
 
-	if (primary.startsWith("_/external/")) {
-		candidates.push(primary.slice("_/external/".length));
+	if (candidates[0]?.startsWith("_/external/")) {
+		candidates.push(candidates[0].slice("_/external/".length));
 	}
-	if (primary.startsWith("_/")) candidates.push(primary.slice(2));
+	if (candidates[0]?.startsWith("_/")) candidates.push(candidates[0].slice(2));
+
+	// Kettu's public Asset type does not expose httpServerLocation. These are
+	// the roots used by current Discord assets and by the bundled iconpacks.
+	candidates.push(
+		`design/components/Icon/native/redesign/generated/images/${file}`,
+		`images/native/${file}`,
+		`images/${file}`,
+		`_/external/${file}`,
+		file,
+	);
 
 	return [...new Set(candidates)];
 }
@@ -55,7 +65,14 @@ function assetPathCandidates(asset: BunnyAsset) {
 function findIconPath(asset: BunnyAsset, tree: string[]) {
 	const candidates = assetPathCandidates(asset);
 	if (!tree.length) return candidates[0];
-	return candidates.find(path => tree.includes(path));
+
+	const exact = candidates.find(path => tree.includes(path));
+	if (exact) return exact;
+
+	// A few packs preserve the same filename but use a different Discord asset
+	// root. Prefer the first tree entry ending in the expected filename.
+	const file = candidates.at(-1);
+	return file ? tree.find(path => path.endsWith(`/${file}`) || path === file) : undefined;
 }
 
 function getThemedAsset(source: any): BunnyAsset | null {
@@ -94,7 +111,15 @@ function getThemedAsset(source: any): BunnyAsset | null {
 		};
 	}
 
-	if (typeof source === "number") return (getAssetByID(source) as BunnyAsset) ?? null;
+	if (typeof source === "number") {
+		const asset = getAssetByID(source) as BunnyAsset | undefined;
+		if (!asset?.name) return null;
+		return {
+			...asset,
+			httpServerLocation: asset.httpServerLocation ?? "",
+			type: asset.type || "png",
+		};
+	}
 	return null;
 }
 
@@ -146,7 +171,7 @@ export default function patchIcons(
 			cloned[0] = props;
 			const source = props.source;
 			const asset = getThemedAsset(source);
-			if (!asset?.httpServerLocation) return cloned;
+			if (!asset?.name) return cloned;
 
 			const iconPath = iconpack ? findIconPath(asset, tree) : undefined;
 			const useIconpack = Boolean(iconpack?.load && iconPath);

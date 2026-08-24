@@ -11,7 +11,12 @@ function normalizeTree(value: string) {
 	return value
 		.replaceAll("\r", "")
 		.split("\n")
-		.map(path => path.trim().replace(/^\/+/, ""))
+		.map(path => path
+			.trim()
+			.replaceAll("\\", "/")
+			.replace(/^\.\//, "")
+			.replace(/^\/+/, "")
+			.replace(/\/+/g, "/"))
 		.filter(Boolean);
 }
 
