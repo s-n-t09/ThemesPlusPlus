@@ -1,6 +1,6 @@
 import { findByName } from "@vendetta/metro";
 import { ReactNative as RN } from "@vendetta/metro/common";
-import { before } from "@vendetta/patcher";
+import { after, before } from "@vendetta/patcher";
 import { getAssetByID, getAssetIDByName } from "@vendetta/ui/assets";
 
 import type { PlusStructure } from "$/typings";
@@ -14,6 +14,7 @@ import { fixPath, joinUrl } from "../stuff/util";
 import type { BunnyAsset, IconpackConfig } from "../types";
 
 const Status = findByName("Status", false);
+const overlaySymbol = Symbol("themes-plus-plus-icon-overlay");
 
 type ImageProps = {
 	source?: any;
@@ -21,6 +22,16 @@ type ImageProps = {
 	ignore?: boolean;
 	[key: string]: any;
 };
+
+function hasCustomOverlays(plus: PlusStructure) {
+	const data = plus as PlusStructure & {
+		customIconOverlays?: boolean;
+		iconOverlays?: boolean;
+	};
+	return data.customOverlays === true
+		|| data.customIconOverlays === true
+		|| data.iconOverlays === true;
+}
 
 function assetPathCandidates(asset: BunnyAsset) {
 	const location = String(asset.httpServerLocation ?? "")
@@ -30,7 +41,6 @@ function assetPathCandidates(asset: BunnyAsset) {
 	const primary = fixPath(`${location}/${file}`);
 	const candidates = [primary];
 
-	// Some third-party packs omit the generated `_/external` prefix.
 	if (primary.startsWith("_/external/")) {
 		candidates.push(primary.slice("_/external/".length));
 	}
@@ -91,6 +101,8 @@ export default function patchIcons(
 	config: IconpackConfig,
 ) {
 	const { iconpack } = state.iconpack;
+	const customOverlays = hasCustomOverlays(plus);
+
 	if (config.biggerStatus && Status) {
 		patches.push(
 			before("default", Status, ([props], ...args) => [
@@ -103,15 +115,25 @@ export default function patchIcons(
 		);
 	}
 
-	if (!plus.icons && !plus.customOverlays && !iconpack) return;
+	if (!plus.icons && !customOverlays && !iconpack) return;
 	if (plus.icons) state.patches.push(PatchType.Icons);
-	if (plus.customOverlays) state.patches.push(PatchType.CustomIconOverlays);
+	if (customOverlays) state.patches.push(PatchType.CustomIconOverlays);
 	if (iconpack) state.patches.push(PatchType.Iconpack);
 
-	// RN.Image became a function component in newer Discord builds. Patching its
-	// old `.render` method (or replacing the method with `instead`) no longer
-	// consistently intercepts calls, so mutate the props with a before-hook.
+	// Newer Discord builds expose Image as a function component. The before hook
+	// transforms props, while the after hook restores the overlay child tree.
 	patches.push(
+		after("Image", RN, (args, ret) => {
+			const overlay = args?.[0]?.[overlaySymbol];
+			return overlay?.children
+				? (
+					<RN.View>
+						{ret}
+						{overlay.children}
+					</RN.View>
+				)
+				: ret;
+		}),
 		before("Image", RN, args => {
 			const cloned = [...args] as [ImageProps, ...any[]];
 			const originalProps = cloned[0];
@@ -126,11 +148,17 @@ export default function patchIcons(
 			const iconPath = iconpack ? findIconPath(asset, tree) : undefined;
 			const useIconpack = Boolean(iconpack?.load && iconPath);
 
-			let overlay: any;
-			if (plus.customOverlays && !useIconpack && typeof source === "number") {
-				overlay = getIconOverlay(plus, source, props.style);
-				if (overlay?.replace) props.source = getAssetIDByName(overlay.replace);
-				if (overlay?.style) props.style = [props.style, overlay.style];
+			if (customOverlays && !useIconpack && typeof source === "number") {
+				const overlay = getIconOverlay(plus, source, props.style);
+				if (overlay) {
+					Object.defineProperty(props, overlaySymbol, {
+						value: overlay,
+						enumerable: false,
+						configurable: true,
+					});
+					if (overlay.replace) props.source = getAssetIDByName(overlay.replace);
+					if (overlay.style) props.style = [props.style, overlay.style];
+				}
 			}
 
 			if (plus.icons) {
