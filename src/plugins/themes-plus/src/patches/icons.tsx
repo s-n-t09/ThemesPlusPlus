@@ -95,7 +95,7 @@ function getThemedAsset(source: any): BunnyAsset | null {
 		&& typeof source.width === "number"
 		&& typeof source.height === "number"
 		&& typeof source.file === "string"
-		&& source.allowIconTheming
+		&& (source.allowIconTheming || /(?:^|\/)(?:design|images|modules|assets)\//i.test(source.file))
 	) {
 		const segments = source.file.replaceAll("\\", "/").split("/");
 		const file = segments.pop() ?? "";
