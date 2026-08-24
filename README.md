@@ -24,7 +24,7 @@ Themes++ repairs and improves the theme enhancement workflow for mobile Discord 
 
 ## Installation
 
-**Installation URL:** [`https://s-n-t09.github.io/ThemesPlusPlus/install.js`](https://s-n-t09.github.io/ThemesPlusPlus/install.js)
+**Installation URL:** [`https://s-n-t09.github.io/ThemesPlusPlus/`](https://s-n-t09.github.io/ThemesPlusPlus/)
 
 1. Copy the installation URL above.
 2. Open Discord, then go to **Settings → Plugins**.
@@ -32,7 +32,7 @@ Themes++ repairs and improves the theme enhancement workflow for mobile Discord 
 4. Paste the URL and press **Install**.
 5. If a confirmation prompt appears, press **Confirm**.
 
-The [installation page](https://s-n-t09.github.io/ThemesPlusPlus/) contains the same instructions and a direct installation button for reference.
+Opening the root URL in a browser shows this installation page. When the same URL is entered in the client plugin manager, it resolves the package files from `manifest.json` and `index.js`.
 
 ## Configuration
 

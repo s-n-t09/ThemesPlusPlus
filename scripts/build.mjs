@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { build } from "esbuild";
 
@@ -9,6 +9,7 @@ const outputRoot = join(root, "dist");
 const manifest = JSON.parse(await readFile(join(pluginRoot, "manifest.json"), "utf8"));
 const defaultLang = JSON.parse(await readFile(join(root, "lang", "values", "base", "themes_plus.json"), "utf8"));
 
+await rm(outputRoot, { recursive: true, force: true });
 await mkdir(outputRoot, { recursive: true });
 
 const vendetta = {
@@ -41,7 +42,7 @@ await build({
   bundle: true,
   format: "iife",
   globalName: "$",
-  outfile: join(outputRoot, "Themes++.js"),
+  outfile: join(outputRoot, "index.js"),
   banner: { js: "(()=>{" },
   footer: { js: "return $;})();" },
   inject: [migration],
@@ -61,12 +62,11 @@ await build({
   logLevel: "info",
 });
 
-const built = await readFile(join(outputRoot, "Themes++.js"));
+const built = await readFile(join(outputRoot, "index.js"));
 const hash = await crypto.subtle.digest("SHA-256", built);
-manifest.main = "Themes++.js";
+manifest.main = "index.js";
 manifest.hash = Array.from(new Uint8Array(hash), byte => byte.toString(16).padStart(2, "0")).join("");
 await writeFile(join(outputRoot, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);
-await writeFile(join(outputRoot, "install.js"), built);
 await writeFile(join(outputRoot, "index.html"), await readFile(join(root, "public", "index.html"), "utf8"));
 await writeFile(join(outputRoot, "version.json"), `${JSON.stringify({ name: manifest.name, hash: manifest.hash, size: built.byteLength }, null, 2)}\n`);
 console.log(`Built ${manifest.name}: ${built.byteLength} bytes`);
