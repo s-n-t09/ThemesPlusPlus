@@ -1,3 +1,5 @@
+import { storage } from "@vendetta/plugin";
+
 import Settings from "./components/Settings";
 import load, { patches } from "./stuff/loader";
 

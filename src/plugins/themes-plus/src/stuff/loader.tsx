@@ -1,3 +1,5 @@
+import { findByStoreName } from "@vendetta/metro";
+
 import type { PlusStructure } from "$/typings";
 
 import { ConfigIconpackMode, enabled, InactiveReason, vstorage } from "..";
