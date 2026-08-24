@@ -28,9 +28,12 @@ function hasCustomOverlays(plus: PlusStructure) {
 		customIconOverlays?: boolean;
 		iconOverlays?: boolean;
 	};
-	return data.customOverlays === true
-		|| data.customIconOverlays === true
-		|| data.iconOverlays === true;
+	if (data.customOverlays === true || data.customIconOverlays === true || data.iconOverlays === true) return true;
+	if (data.customOverlays === false || data.customIconOverlays === false || data.iconOverlays === false) return false;
+
+	// Older themes often shipped icon colors without the overlay capability flag.
+	// Their check/radio assets are still compatible with the built-in overlay map.
+	return Boolean(plus.icons && typeof plus.icons === "object");
 }
 
 function assetPathCandidates(asset: BunnyAsset) {
