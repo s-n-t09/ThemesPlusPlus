@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
+import { transformFile } from "@swc/core";
 import { build } from "esbuild";
 
 const root = resolve(import.meta.dirname, "..");
@@ -40,9 +41,14 @@ await build({
   entryPoints: [join(pluginRoot, manifest.main)],
   bundle: true,
   format: "iife",
+  supported: {
+    "const-and-let": false,
+  },
+  minifySyntax: true,
+  minifyWhitespace: true,
   globalName: "$",
   outfile: join(outputRoot, "index.js"),
-  banner: { js: "(()=>{" },
+  banner: { js: "(()=>{\n\"use strict\";" },
   footer: { js: "return $;})();" },
   jsxFactory: "React.createElement",
   define: {
@@ -56,7 +62,42 @@ await build({
     ".png": "dataurl",
     ".json": "json",
   },
-  plugins: [aliases, vendetta],
+  plugins: [
+    aliases,
+    vendetta,
+    {
+      name: "swc",
+      setup(api) {
+        api.onLoad({ filter: /\.[cm]?[jt]sx?$/ }, async args => {
+          const result = await transformFile(args.path, {
+            jsc: {
+              externalHelpers: false,
+            },
+            env: {
+              targets: "fully supports es6",
+              include: [
+                "transform-block-scoping",
+                "transform-classes",
+                "transform-async-to-generator",
+                "transform-async-generator-functions",
+                "transform-named-capturing-groups-regex",
+              ],
+              exclude: [
+                "transform-parameters",
+                "transform-template-literals",
+                "transform-exponentiation-operator",
+                "transform-nullish-coalescing-operator",
+                "transform-object-rest-spread",
+                "transform-optional-chaining",
+                "transform-logical-assignment-operators",
+              ],
+            },
+          });
+          return { contents: result.code };
+        });
+      },
+    },
+  ],
   logLevel: "info",
 });
 
