@@ -75,9 +75,26 @@ function findIconPath(asset: BunnyAsset, tree: string[]) {
 	return file ? tree.find(path => path.endsWith(`/${file}`) || path === file) : undefined;
 }
 
+function assetFromRegistry(value: any): BunnyAsset | null {
+	const ids = [value, value?.id, value?.assetId, value?.asset?.id]
+		.filter((id): id is number => typeof id === "number");
+	for (const id of [...new Set(ids)]) {
+		const asset = getAssetByID(id) as BunnyAsset | undefined;
+		if (asset?.name) {
+			return {
+				...asset,
+				httpServerLocation: asset.httpServerLocation ?? "",
+				type: asset.type || "png",
+			};
+		}
+	}
+	return null;
+}
+
 function getThemedAsset(source: any): BunnyAsset | null {
+	const candidate = Array.isArray(source) ? source[0] : source;
 	const modIcon = Object.entries(modIcons).find(
-		([, value]) => source?.uri === value.raw,
+		([, value]) => candidate?.uri === value.raw,
 	);
 	if (modIcon) {
 		return {
@@ -89,37 +106,52 @@ function getThemedAsset(source: any): BunnyAsset | null {
 		};
 	}
 
+	const registryAsset = assetFromRegistry(candidate);
+	if (registryAsset) return registryAsset;
+
+	if (candidate && typeof candidate.name === "string") {
+		return {
+			httpServerLocation: String(candidate.httpServerLocation ?? ""),
+			width: Number(candidate.width) || 64,
+			height: Number(candidate.height) || 64,
+			name: candidate.name,
+			type: candidate.type || "png",
+		};
+	}
+
 	if (
-		source
-		&& typeof source.uri === "string"
-		&& typeof source.width === "number"
-		&& typeof source.height === "number"
-		&& typeof source.file === "string"
-		&& (source.allowIconTheming || /(?:^|\/)(?:design|images|modules|assets)\//i.test(source.file))
+		candidate
+		&& typeof candidate.uri === "string"
+		&& typeof candidate.width === "number"
+		&& typeof candidate.height === "number"
 	) {
-		const segments = source.file.replaceAll("\\", "/").split("/");
+		const uriPath = candidate.uri.split(/[?#]/, 1)[0].replaceAll("\\", "/");
+		const filePath = typeof candidate.file === "string"
+			? candidate.file
+			: /\.(?:png|jpe?g|webp|gif|bmp)$/i.test(uriPath)
+			? uriPath
+			: "";
+		const normalizedPath = filePath.replaceAll("\\", "/");
+		const segments = normalizedPath.split("/");
 		const file = segments.pop() ?? "";
 		const extensionIndex = file.lastIndexOf(".");
-		if (extensionIndex <= 0) return null;
-
-		return {
-			httpServerLocation: `//_/external/${segments.join("/")}`.replace(/\/$/, ""),
-			width: source.width,
-			height: source.height,
-			name: file.slice(0, extensionIndex),
-			type: file.slice(extensionIndex + 1),
-		};
+		const isDiscordAsset = Boolean(
+			candidate.allowIconTheming
+			|| /(?:^|\/)(?:design|images|modules|assets)\//i.test(normalizedPath)
+			|| extensionIndex > 0 && !candidate.uri.startsWith("data:"),
+		);
+		if (isDiscordAsset && extensionIndex > 0) {
+			return {
+				httpServerLocation: `//_/external/${segments.join("/")}`.replace(/\/$/, ""),
+				width: candidate.width,
+				height: candidate.height,
+				name: file.slice(0, extensionIndex),
+				type: file.slice(extensionIndex + 1),
+			};
+		}
 	}
 
-	if (typeof source === "number") {
-		const asset = getAssetByID(source) as BunnyAsset | undefined;
-		if (!asset?.name) return null;
-		return {
-			...asset,
-			httpServerLocation: asset.httpServerLocation ?? "",
-			type: asset.type || "png",
-		};
-	}
+	if (typeof source === "number" || candidate !== source) return assetFromRegistry(source);
 	return null;
 }
 
