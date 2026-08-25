@@ -8,8 +8,10 @@ import { useProxy } from "@vendetta/storage";
 import { semanticColors } from "@vendetta/ui";
 import { getAssetIDByName } from "@vendetta/ui/assets";
 import { Forms } from "@vendetta/ui/components";
-import { basicFormat, ConfigIconpackMode, lang, vstorage } from "../../..";
-import { state } from "../../../stuff/active";
+import { basicFormat, ConfigIconpackMode, lang } from "../../..";
+import { vstorage } from "../../../stuff/storage";
+import { state, useState } from "../../../stuff/active";
+import load from "../../../stuff/loader";
 import { customUrl } from "../../../stuff/util";
 import IconpackRow, { previewIcon } from "../../IconpackRow";
 
@@ -184,6 +186,7 @@ function ManualIconpack() {
 							vstorage.iconpack.pack = pack.id;
 							vstorage.iconpack.isCustom = false;
 							forceUpdate();
+							void load();
 						}}
 					/>
 				))}
@@ -201,6 +204,7 @@ function ManualIconpack() {
 						vstorage.iconpack.pack = undefined;
 						vstorage.iconpack.isCustom = true;
 						forceUpdate();
+						void load();
 					}}
 				/>
 			</BetterTableRowGroup>
@@ -211,6 +215,7 @@ function ManualIconpack() {
 
 export function IconpackTab() {
 	useProxy(vstorage);
+	useState();
 
 	return (
 		<>
@@ -248,6 +253,7 @@ export function IconpackTab() {
 							})),
 							callback(v: any) {
 								vstorage.iconpack.mode = v;
+								void load();
 							},
 						});
 					}}

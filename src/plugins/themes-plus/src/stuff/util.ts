@@ -1,4 +1,5 @@
 import { useCacheStore } from "../stores/CacheStore";
+import { vstorage } from "./storage";
 
 export function customUrl() {
 	const rawUrl = String(vstorage.iconpack?.custom?.url ?? "").trim();

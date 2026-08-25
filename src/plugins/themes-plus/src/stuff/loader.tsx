@@ -2,7 +2,8 @@ import { findByStoreName } from "@vendetta/metro";
 
 import type { PlusStructure } from "$/typings";
 
-import { ConfigIconpackMode, enabled, InactiveReason, vstorage } from "..";
+import { ConfigIconpackMode, enabled, InactiveReason } from "..";
+import { vstorage } from "./storage";
 import patchIcons from "../patches/icons";
 import patchMentionLineColors from "../patches/mentionLineColor";
 import type { IconpackConfig, IconpackData } from "../types";

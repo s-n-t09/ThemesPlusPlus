@@ -1,7 +1,8 @@
-import { storage } from "@vendetta/plugin";
-
 import Settings from "./components/Settings";
 import load, { patches } from "./stuff/loader";
+import { vstorage } from "./stuff/storage";
+
+export { vstorage } from "./stuff/storage";
 
 export enum PatchType {
 	Icons = "icons",
@@ -23,19 +24,6 @@ export enum ConfigIconpackMode {
 	Manual = "manual",
 	Disabled = "disabled",
 }
-
-export const vstorage = storage as {
-	iconpack: {
-		mode: ConfigIconpackMode;
-		pack?: string;
-		custom: {
-			url: string;
-			suffix: string;
-			config: { biggerStatus: boolean };
-		};
-		isCustom: boolean;
-	};
-};
 
 const strings: Record<string, string> = {
 	"settings.reload": "Reload",
