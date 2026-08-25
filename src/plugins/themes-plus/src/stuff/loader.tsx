@@ -73,9 +73,13 @@ export default async function load() {
 			? vstorage.iconpack.pack
 			: undefined;
 
-		// Disabled mode and themes without an iconpack must still allow the
-		// remaining color and overlay patches to load.
-		if (mode !== ConfigIconpackMode.Disabled && !isCustomIconpack && requestedPack) {
+		// Manual mode must keep its list visible even while Custom is selected;
+		// otherwise load() clears the list and leaves no pack to switch back to.
+		const shouldFetchManualList = mode === ConfigIconpackMode.Manual;
+		const shouldFetchAutomaticPack = mode === ConfigIconpackMode.Automatic
+			&& !isCustomIconpack
+			&& Boolean(requestedPack);
+		if (shouldFetchManualList || shouldFetchAutomaticPack) {
 			await fetchIconpackIndex();
 		}
 
