@@ -107,5 +107,6 @@ manifest.main = "index.js";
 manifest.hash = Array.from(new Uint8Array(hash), byte => byte.toString(16).padStart(2, "0")).join("");
 await writeFile(join(outputRoot, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);
 await writeFile(join(outputRoot, "index.html"), await readFile(join(root, "public", "index.html"), "utf8"));
+await writeFile(join(outputRoot, "docs.html"), await readFile(join(root, "public", "docs.html"), "utf8"));
 await writeFile(join(outputRoot, "version.json"), `${JSON.stringify({ name: manifest.name, hash: manifest.hash, size: built.byteLength }, null, 2)}\n`);
 console.log(`Built ${manifest.name}: ${built.byteLength} bytes`);
