@@ -22,6 +22,16 @@ Themes++ repairs and improves the theme enhancement workflow for mobile Discord 
 | Plugin lifecycle | Prevents asynchronous load errors and stale loading states from leaving the settings screen stuck. |
 | Client compatibility | Targets Revenge, Kettu, and compatible Vendetta-based clients that expose the standard plugin API. |
 
+## Original project and attribution
+
+Themes++ is inspired by and built as a repair-focused continuation of the original [Themes+](https://github.com/nexpid/ThemesPlus) project. Themes+ was created and maintained by **Nexpid**. The original repository contains the upstream project history, documentation, and implementation that inspired Themes++.
+
+Themes++ is independently authored and maintained by **S.N.T** (`1444349574859980881`).
+
+## Documentation
+
+A detailed explanation of Themes++ features, configuration modes, iconpack replacement, React Native compatibility repairs, storage fixes, caching, overlays, and troubleshooting is available on the [Themes++ Documentation page](https://s-n-t09.github.io/ThemesPlusPlus/docs.html).
+
 ## Installation
 
 **Installation URL:** [`https://s-n-t09.github.io/ThemesPlusPlus/`](https://s-n-t09.github.io/ThemesPlusPlus/)
@@ -32,7 +42,7 @@ Themes++ repairs and improves the theme enhancement workflow for mobile Discord 
 4. Paste the URL and press **Install**.
 5. If a confirmation prompt appears, press **Confirm**.
 
-Opening the root URL in a browser shows this installation page. When the same URL is entered in the client plugin manager, it resolves the package files from `manifest.json` and `index.js`.
+Opening the root URL in a browser shows this installation page. When the same URL is entered in the client plugin manager, it resolves the package files from `manifest.json` and `index.js`. Read the [online documentation](https://s-n-t09.github.io/ThemesPlusPlus/docs.html) for a detailed technical overview.
 
 ## Configuration
 
